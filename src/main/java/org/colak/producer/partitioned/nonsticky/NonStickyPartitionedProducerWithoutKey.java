@@ -1,37 +1,36 @@
 package org.colak.producer.partitioned.nonsticky;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.clients.admin.AdminClient;
-import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.clients.producer.RoundRobinPartitioner;
 import org.apache.kafka.common.serialization.StringSerializer;
+import org.colak.producer.util.AdminClientUtil;
 
-import java.util.Collections;
 import java.util.Properties;
 
 /**
  * Even if the producer is rapidly sending it avoids batching because of round-robin
  */
 @Slf4j
-public class NonStickyPartitionedProducer {
+public class NonStickyPartitionedProducerWithoutKey {
 
-    private static final String TOPIC_NAME = "non_sticky_partitioned_topic";
+    // cd /opt/landoop/kafka/bin
+    // kafka-topics --delete --bootstrap-server localhost:9092 --topic non_sticky_partitioned_topic_without_key
+    private static final String TOPIC_NAME = "non_sticky_partitioned_topic_without_key";
     private static final String VALUE = "Hello World";
 
     private KafkaProducer<String, String> kafkaProducer;
 
-    public static void main(String[] args) {
-        NonStickyPartitionedProducer producer = new NonStickyPartitionedProducer();
+    public static void main(String[] args) throws Exception {
+        NonStickyPartitionedProducerWithoutKey producer = new NonStickyPartitionedProducerWithoutKey();
         producer.produce();
     }
 
-    public void produce() {
-        createTopic();
+    public void produce() throws InterruptedException {
+        AdminClientUtil.createTopic(TOPIC_NAME);
         kafkaProducer = createProducer();
 
-        sendWithCallback();
+        send();
 
         // Tell producer to send all data and block until complete - synchronous
         kafkaProducer.flush();
@@ -40,38 +39,21 @@ public class NonStickyPartitionedProducer {
         kafkaProducer.close();
     }
 
-    private void createTopic() {
-        Properties adminProperties = new Properties();
-        adminProperties.setProperty("bootstrap.servers", "localhost:9092");
-        try (AdminClient adminClient = AdminClient.create(adminProperties)) {
-            // Specify the topic name and number of partitions
-            int numPartitions = 2;
-
-            // Create a NewTopic instance
-            NewTopic newTopic = new NewTopic(TOPIC_NAME, numPartitions, (short) 1); // (short) 1 is the replication factor
-
-            // Create the topic using the AdminClient
-            adminClient.createTopics(Collections.singleton(newTopic)).all().get();
-
-            log.info("Topic '" + TOPIC_NAME + "' created with " + numPartitions + " partitions.");
-        } catch (Exception exception) {
-            log.error("Exception caught", exception);
-        }
-    }
 
     private KafkaProducer<String, String> createProducer() {
         Properties properties = new Properties();
         properties.setProperty("bootstrap.servers", "localhost:9092");
         properties.setProperty("key.serializer", StringSerializer.class.getName());
         properties.setProperty("value.serializer", StringSerializer.class.getName());
-        properties.setProperty("partitioner.class", RoundRobinPartitioner.class.getName());
+        //properties.setProperty("partitioner.class", RoundRobinPartitioner.class.getName());
 
         return new KafkaProducer<>(properties);
     }
 
-    private void sendWithCallback() {
+    private void send() throws InterruptedException {
         for (int i = 0; i < 10; i++) {
             ProducerRecord<String, String> producerRecord = new ProducerRecord<>(TOPIC_NAME, VALUE);
+
             kafkaProducer.send(producerRecord, (recordMetadata, exception) -> {
                 // Executes every time a record is successfully sent or an exception is thrown
                 if (exception == null) {

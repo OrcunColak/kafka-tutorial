@@ -1,13 +1,11 @@
 package org.colak.producer.partitioned.sticky;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.clients.admin.AdminClient;
-import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.StringSerializer;
+import org.colak.producer.util.AdminClientUtil;
 
-import java.util.Collections;
 import java.util.Properties;
 
 /**
@@ -28,7 +26,7 @@ public class StickyPartitionedProducer {
     }
 
     public void produce() {
-        createTopic();
+        AdminClientUtil.createTopic(TOPIC_NAME);
         kafkaProducer = createProducer();
 
         sendWithCallback();
@@ -40,24 +38,6 @@ public class StickyPartitionedProducer {
         kafkaProducer.close();
     }
 
-    private void createTopic() {
-        Properties adminProperties = new Properties();
-        adminProperties.setProperty("bootstrap.servers", "localhost:9092");
-        try (AdminClient adminClient = AdminClient.create(adminProperties)) {
-            // Specify the topic name and number of partitions
-            int numPartitions = 2;
-
-            // Create a NewTopic instance
-            NewTopic newTopic = new NewTopic(TOPIC_NAME, numPartitions, (short) 1); // (short) 1 is the replication factor
-
-            // Create the topic using the AdminClient
-            adminClient.createTopics(Collections.singleton(newTopic)).all().get();
-
-            log.info("Topic '" + TOPIC_NAME + "' created with " + numPartitions + " partitions.");
-        } catch (Exception exception) {
-            log.error("Exception caught", exception);
-        }
-    }
 
     private KafkaProducer<String, String> createProducer() {
         Properties properties = new Properties();
@@ -71,6 +51,7 @@ public class StickyPartitionedProducer {
     private void sendWithCallback() {
         for (int i = 0; i < 10; i++) {
             ProducerRecord<String, String> producerRecord = new ProducerRecord<>(TOPIC_NAME, VALUE);
+
             kafkaProducer.send(producerRecord, (recordMetadata, exception) -> {
                 // Executes every time a record is successfully sent or an exception is thrown
                 if (exception == null) {
