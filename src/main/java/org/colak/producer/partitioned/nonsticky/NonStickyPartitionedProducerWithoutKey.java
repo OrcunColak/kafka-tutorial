@@ -3,6 +3,7 @@ package org.colak.producer.partitioned.nonsticky;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RoundRobinPartitioner;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.colak.producer.util.AdminClientUtil;
 
@@ -45,7 +46,9 @@ public class NonStickyPartitionedProducerWithoutKey {
         properties.setProperty("bootstrap.servers", "localhost:9092");
         properties.setProperty("key.serializer", StringSerializer.class.getName());
         properties.setProperty("value.serializer", StringSerializer.class.getName());
-        //properties.setProperty("partitioner.class", RoundRobinPartitioner.class.getName());
+        // If RoundRobinPartitioner is not used, all records go to the same partition
+        // If RoundRobinPartitioner is used, records are distributed among partitions
+        properties.setProperty("partitioner.class", RoundRobinPartitioner.class.getName());
 
         return new KafkaProducer<>(properties);
     }
@@ -68,5 +71,6 @@ public class NonStickyPartitionedProducerWithoutKey {
                 }
             });
         }
+
     }
 }

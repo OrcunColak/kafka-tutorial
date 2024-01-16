@@ -47,6 +47,9 @@ public class NonStickyPartitionedProducerWithKey {
         properties.setProperty("bootstrap.servers", "localhost:9092");
         properties.setProperty("key.serializer", StringSerializer.class.getName());
         properties.setProperty("value.serializer", StringSerializer.class.getName());
+        // If RoundRobinPartitioner is not used, all records go to the same partition
+        // If RoundRobinPartitioner is used, records are distributed among partitions.
+        // However, it seems key is not taken into account
         properties.setProperty("partitioner.class", RoundRobinPartitioner.class.getName());
 
         return new KafkaProducer<>(properties);
