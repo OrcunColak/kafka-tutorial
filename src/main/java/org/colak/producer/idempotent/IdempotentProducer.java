@@ -13,7 +13,7 @@ import java.util.Properties;
  * Idempotent producer guarantees the order of messages and solves duplication issues
  */
 @Slf4j
-public class IdempotentProducer {
+class IdempotentProducer {
 
     private static final String TOPIC_NAME = "idempotent_topic";
     private static final String VALUE = "Hello World";

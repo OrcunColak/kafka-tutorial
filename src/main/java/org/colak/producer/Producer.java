@@ -9,7 +9,7 @@ import org.apache.kafka.common.serialization.StringSerializer;
 import java.util.Properties;
 
 @Slf4j
-public class Producer {
+class Producer {
 
     private static final String TOPIC_NAME = "demo_topic";
     private static final String VALUE = "Hello World";
