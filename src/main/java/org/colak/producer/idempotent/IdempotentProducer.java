@@ -8,6 +8,7 @@ import org.apache.kafka.common.serialization.StringSerializer;
 import org.colak.producer.util.AdminClientUtil;
 
 import java.util.Properties;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Idempotent producer guarantees the order of messages and solves duplication issues
@@ -20,12 +21,12 @@ class IdempotentProducer {
 
     private KafkaProducer<String, String> kafkaProducer;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         IdempotentProducer producer = new IdempotentProducer();
         producer.produce();
     }
 
-    public void produce() {
+    public void produce() throws ExecutionException, InterruptedException {
         AdminClientUtil.createTopic(TOPIC_NAME, 1, (short) 1);
 
         kafkaProducer = createProducer();

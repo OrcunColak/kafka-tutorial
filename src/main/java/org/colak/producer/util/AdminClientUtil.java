@@ -11,16 +11,18 @@ import org.apache.kafka.common.KafkaFuture;
 import java.util.Collections;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
 @Slf4j
 @UtilityClass
 public class AdminClientUtil {
 
-    public void createTopic(String topicName) {
+    public void createTopic(String topicName) throws ExecutionException, InterruptedException {
         createTopic(topicName, 3, (short) 1);
     }
 
-    public void createTopic(String topicName, int numPartitions, short replicationFactor) {
+    public void createTopic(String topicName, int numPartitions, short replicationFactor)
+            throws ExecutionException, InterruptedException {
         Properties adminProperties = new Properties();
         adminProperties.setProperty("bootstrap.servers", "localhost:9092");
         try (AdminClient adminClient = AdminClient.create(adminProperties)) {
@@ -35,12 +37,10 @@ public class AdminClientUtil {
             future.get();
 
             log.info("Topic '" + topicName + "' created with " + numPartitions + " partitions.");
-        } catch (Exception exception) {
-            log.error("Exception caught", exception);
         }
     }
 
-    public void deleteTopic(String topicName) {
+    public void deleteTopic(String topicName) throws ExecutionException, InterruptedException {
         Properties adminProperties = new Properties();
         adminProperties.setProperty("bootstrap.servers", "localhost:9092");
         try (AdminClient adminClient = AdminClient.create(adminProperties)) {
@@ -51,8 +51,6 @@ public class AdminClientUtil {
             future.get();
 
             log.info("Topic '" + topicName + "' is deleted ");
-        } catch (Exception exception) {
-            log.error("Exception caught", exception);
         }
     }
 }

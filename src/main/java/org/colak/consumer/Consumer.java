@@ -5,6 +5,7 @@ import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.common.errors.WakeupException;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
 import java.time.Duration;
@@ -37,10 +38,12 @@ public class Consumer {
             Thread mainThread = Thread.currentThread();
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {
                 log.info("Detected shutdown");
+                // See https://medium.com/@pravvich/apache-kafka-guide-15-java-api-consumer-group-fbbf49f8513b
+                //  shut down your consumer clean and gracefully using consumer.wakeup()
                 kafkaConsumer.wakeup();
                 try {
                     mainThread.join();
-                } catch (InterruptedException e) {
+                } catch (InterruptedException | WakeupException e) {
                     throw new RuntimeException(e);
                 }
             }));

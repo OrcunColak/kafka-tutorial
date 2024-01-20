@@ -9,6 +9,7 @@ import org.apache.kafka.common.serialization.StringSerializer;
 import org.colak.producer.util.AdminClientUtil;
 
 import java.util.Properties;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -29,7 +30,7 @@ public class NonStickyPartitionedProducerWithKey {
         producer.produce();
     }
 
-    public void produce() throws InterruptedException {
+    public void produce() throws InterruptedException, ExecutionException {
         AdminClientUtil.deleteTopic(TOPIC_NAME);
         AdminClientUtil.createTopic(TOPIC_NAME);
         kafkaProducer = createProducer();

@@ -9,6 +9,7 @@ import org.apache.kafka.common.serialization.StringSerializer;
 import org.colak.producer.util.AdminClientUtil;
 
 import java.util.Properties;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Even if the producer is rapidly sending it avoids batching because of round-robin
@@ -28,7 +29,7 @@ public class NonStickyPartitionedProducerWithoutKey {
         producer.produce();
     }
 
-    public void produce() throws InterruptedException {
+    public void produce() throws InterruptedException, ExecutionException {
         AdminClientUtil.createTopic(TOPIC_NAME);
         kafkaProducer = createProducer();
 

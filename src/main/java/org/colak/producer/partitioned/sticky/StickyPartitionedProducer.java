@@ -8,6 +8,7 @@ import org.apache.kafka.common.serialization.StringSerializer;
 import org.colak.producer.util.AdminClientUtil;
 
 import java.util.Properties;
+import java.util.concurrent.ExecutionException;
 
 /**
  * If you rapidly send, the producer is clever enough to group these messages into a single batch for
@@ -21,12 +22,12 @@ public class StickyPartitionedProducer {
 
     private KafkaProducer<String, String> kafkaProducer;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         StickyPartitionedProducer producer = new StickyPartitionedProducer();
         producer.produce();
     }
 
-    public void produce() {
+    public void produce() throws ExecutionException, InterruptedException {
         AdminClientUtil.createTopic(TOPIC_NAME);
         kafkaProducer = createProducer();
 
