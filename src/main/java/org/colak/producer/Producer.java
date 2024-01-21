@@ -25,7 +25,7 @@ class Producer {
         kafkaProducer = createProducer();
 
         sendWithKey();
-        sendWithoutKey();
+//        sendWithoutKey();
 
         // Tell producer to send all data and block until complete - synchronous
         kafkaProducer.flush();
