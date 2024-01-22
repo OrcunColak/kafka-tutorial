@@ -3,6 +3,7 @@ package org.colak.producer.util;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.CreateTopicsResult;
 import org.apache.kafka.clients.admin.DeleteTopicsResult;
 import org.apache.kafka.clients.admin.NewTopic;
@@ -24,7 +25,7 @@ public class AdminClientUtil {
     public void createTopic(String topicName, int numPartitions, short replicationFactor)
             throws ExecutionException, InterruptedException {
         Properties adminProperties = new Properties();
-        adminProperties.setProperty("bootstrap.servers", "localhost:9092");
+        adminProperties.setProperty(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
         try (AdminClient adminClient = AdminClient.create(adminProperties)) {
 
             // Create a NewTopic instance
@@ -42,7 +43,7 @@ public class AdminClientUtil {
 
     public void deleteTopic(String topicName) throws ExecutionException, InterruptedException {
         Properties adminProperties = new Properties();
-        adminProperties.setProperty("bootstrap.servers", "localhost:9092");
+        adminProperties.setProperty(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
         try (AdminClient adminClient = AdminClient.create(adminProperties)) {
 
             Set<String> topics = Collections.singleton(topicName);
