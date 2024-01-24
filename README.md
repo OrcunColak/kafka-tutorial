@@ -18,3 +18,6 @@ https://medium.com/@pravvich/apache-kafka-guide-13-java-api-producer-message-key
 # Idempotent Producer
 Original code is from  
 https://medium.com/@mbh023/kafka-ordering-message-and-deduplication-with-idempotent-producer-cdc6a3ccc8af
+The retry policy is from  
+https://medium.com/@anupriya7295/kafka-producer-error-handling-37e4fa218e69
+

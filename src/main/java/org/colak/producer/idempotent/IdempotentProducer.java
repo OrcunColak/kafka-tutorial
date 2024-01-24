@@ -52,11 +52,24 @@ class IdempotentProducer {
 
         // max.in.flight.requests.per.connection is for enhancing throughput.
         // Before this option appears, the Kafka producer always has to wait for ACK from the broker. This degrades performance.
+        // In case of error all in  flight requests will fail because of idempotence
         properties.setProperty(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, "3");
-        properties.setProperty(ProducerConfig.RETRIES_CONFIG, "1");
-        properties.setProperty(ProducerConfig.REQUEST_TIMEOUT_MS_CONFIG, "30000");
+
+        retryConfig(properties);
 
         return new KafkaProducer<>(properties);
+    }
+
+    private static void retryConfig(Properties properties) {
+        // The retries parameter determines the maximum number of times a producer will attempt to resend a message in case of failure.
+        properties.setProperty(ProducerConfig.RETRIES_CONFIG, "1");
+
+        // The retry.backoff.ms parameter determines the time the producer waits between consecutive retries.
+        // It specifies the backoff period, allowing the producer to avoid overwhelming the broker with rapid retry attempts.
+        //By default, the producer will wait 100ms between retries
+        properties.setProperty(ProducerConfig.RETRY_BACKOFF_MS_CONFIG, "1");
+
+        properties.setProperty(ProducerConfig.REQUEST_TIMEOUT_MS_CONFIG, "30000");
     }
 
 
