@@ -35,11 +35,13 @@ class SchemeRegistryProducer {
 
     private KafkaProducer<String, MyOrder> createProducer() {
         Properties properties = new Properties();
-        properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        // 19092 not 9092
+        properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:19092");
         properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
 
         // The KafkaAvroSerializer class is responsible for serializing the message in to Avro format.
         properties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class.getName());
+        // To se the schema http://localhost:8081/subjects/order_topic-value/versions/latest
         properties.setProperty("schema.registry.url", "http://localhost:8081");
 
         return new KafkaProducer<>(properties);
