@@ -39,7 +39,8 @@ public class Consumer {
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {
                 log.info("Detected shutdown");
                 // See https://medium.com/@pravvich/apache-kafka-guide-15-java-api-consumer-group-fbbf49f8513b
-                //  shut down your consumer clean and gracefully using consumer.wakeup()
+                // wakeup() that is often used to interrupt and wake up a blocking Kafka consumer.
+                // This method is typically used to gracefully shut down a consumer.
                 kafkaConsumer.wakeup();
                 try {
                     mainThread.join();
