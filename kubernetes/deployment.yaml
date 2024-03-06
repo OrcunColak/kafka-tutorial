@@ -1,0 +1,37 @@
+# https://blog.devgenius.io/implementing-apache-kafka-and-docker-integration-a-comprehensive-guide-5c6872a37c77
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka-broker-1
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: kafka-broker-1
+  template:
+    metadata:
+      labels:
+        app: kafka-broker-1
+    spec:
+      containers:
+        - name: kafka-broker-1
+          image: confluentinc/cp-kafka
+          env:
+            - name: KAFKA_ADVERTISED_LISTENERS
+              value: PLAINTEXT://kafka-broker-1:9092
+            - name: KAFKA_LISTENERS
+              value: PLAINTEXT://0.0.0.0:9092
+            # Add other Kafka configurations here
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-service
+spec:
+  selector:
+    app: kafka-broker-1
+  ports:
+    - protocol: TCP
+      port: 9092
+      targetPort: 9092
+  type: LoadBalancer
