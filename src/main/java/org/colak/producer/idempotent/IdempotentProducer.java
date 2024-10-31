@@ -29,15 +29,18 @@ class IdempotentProducer {
     public void produce() throws ExecutionException, InterruptedException {
         AdminClientUtil.createTopic(TOPIC_NAME, 1, (short) 1);
 
-        kafkaProducer = createProducer();
+        try {
+            kafkaProducer = createProducer();
 
-        sendWithCallback();
+            sendWithCallback();
 
-        // Tell producer to send all data and block until complete - synchronous
-        kafkaProducer.flush();
+            // Tell producer to send all data and block until complete - synchronous
+            kafkaProducer.flush();
 
-        // Close the producer
-        kafkaProducer.close();
+        } finally {
+            // Close the producer
+            kafkaProducer.close();
+        }
     }
 
     private KafkaProducer<String, String> createProducer() {
@@ -66,7 +69,7 @@ class IdempotentProducer {
 
         // The retry.backoff.ms parameter determines the time the producer waits between consecutive retries.
         // It specifies the backoff period, allowing the producer to avoid overwhelming the broker with rapid retry attempts.
-        //By default, the producer will wait 100ms between retries
+        // By default, the producer will wait 100ms between retries
         properties.setProperty(ProducerConfig.RETRY_BACKOFF_MS_CONFIG, "1");
 
         properties.setProperty(ProducerConfig.REQUEST_TIMEOUT_MS_CONFIG, "30000");

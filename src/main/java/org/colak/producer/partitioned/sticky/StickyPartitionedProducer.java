@@ -15,7 +15,7 @@ import java.util.concurrent.ExecutionException;
  * increased efficiency.
  */
 @Slf4j
-public class StickyPartitionedProducer {
+class StickyPartitionedProducer {
 
     private static final String TOPIC_NAME = "sticky_partitioned_topic";
     private static final String VALUE = "Hello World";
@@ -27,7 +27,7 @@ public class StickyPartitionedProducer {
         producer.produce();
     }
 
-    public void produce() throws ExecutionException, InterruptedException {
+    private void produce() throws ExecutionException, InterruptedException {
         AdminClientUtil.createTopic(TOPIC_NAME);
         kafkaProducer = createProducer();
 

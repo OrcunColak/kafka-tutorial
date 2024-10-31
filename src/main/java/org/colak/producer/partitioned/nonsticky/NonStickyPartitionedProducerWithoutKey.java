@@ -15,7 +15,7 @@ import java.util.concurrent.ExecutionException;
  * Even if the producer is rapidly sending it avoids batching because of round-robin
  */
 @Slf4j
-public class NonStickyPartitionedProducerWithoutKey {
+class NonStickyPartitionedProducerWithoutKey {
 
     // cd /opt/landoop/kafka/bin
     // kafka-topics --delete --bootstrap-server localhost:9092 --topic non_sticky_partitioned_topic_without_key
@@ -29,17 +29,20 @@ public class NonStickyPartitionedProducerWithoutKey {
         producer.produce();
     }
 
-    public void produce() throws InterruptedException, ExecutionException {
+    private void produce() throws InterruptedException, ExecutionException {
         AdminClientUtil.createTopic(TOPIC_NAME);
-        kafkaProducer = createProducer();
 
-        send();
+        try {
+            kafkaProducer = createProducer();
 
-        // Tell producer to send all data and block until complete - synchronous
-        kafkaProducer.flush();
+            send();
 
-        // Close the producer
-        kafkaProducer.close();
+            // Tell producer to send all data and block until complete - synchronous
+            kafkaProducer.flush();
+        } finally {
+            // Close the producer
+            kafkaProducer.close();
+        }
     }
 
 
@@ -56,7 +59,7 @@ public class NonStickyPartitionedProducerWithoutKey {
         return new KafkaProducer<>(properties);
     }
 
-    private void send() throws InterruptedException {
+    private void send() {
         for (int i = 0; i < 10; i++) {
             ProducerRecord<String, String> producerRecord = new ProducerRecord<>(TOPIC_NAME, VALUE);
 

@@ -15,7 +15,7 @@ import java.util.Properties;
  * If you run this code a couple of times partition will be different for each run.
  */
 @Slf4j
-public class PartitionedProducer {
+class PartitionedProducer {
 
     private static final String TOPIC_NAME = "partitioned_topic";
     private static final String VALUE = "Hello World";
@@ -27,7 +27,7 @@ public class PartitionedProducer {
         producer.produce();
     }
 
-    public void produce() {
+    private void produce() {
         createTopic();
         kafkaProducer = createProducer();
 
@@ -53,7 +53,7 @@ public class PartitionedProducer {
             // Create the topic using the AdminClient
             adminClient.createTopics(Collections.singleton(newTopic)).all().get();
 
-            log.info("Topic '" + TOPIC_NAME + "' created with " + numPartitions + " partitions.");
+            log.info("Topic '{}' created with {} partitions.", TOPIC_NAME, numPartitions);
         } catch (Exception exception) {
             log.error("Exception caught", exception);
         }

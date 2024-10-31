@@ -21,17 +21,19 @@ class Producer {
         producer.produce();
     }
 
-    public void produce() {
-        kafkaProducer = createProducer();
+    private void produce() {
+        try {
+            kafkaProducer = createProducer();
 
-        sendWithKey();
+            sendWithKey();
 //        sendWithoutKey();
 
-        // Tell producer to send all data and block until complete - synchronous
-        kafkaProducer.flush();
-
-        // Close the producer
-        kafkaProducer.close();
+            // Tell producer to send all data and block until complete - synchronous
+            kafkaProducer.flush();
+        } finally {
+            // Close the producer
+            kafkaProducer.close();
+        }
     }
 
     private KafkaProducer<String, String> createProducer() {

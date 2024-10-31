@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
  * Even if the producer is rapidly sending it avoids batching because of round-robin
  */
 @Slf4j
-public class NonStickyPartitionedProducerWithKey {
+class NonStickyPartitionedProducerWithKey {
 
     // cd /opt/landoop/kafka/bin
     // kafka-topics --delete --bootstrap-server localhost:9092 --topic non_sticky_partitioned_topic_with_key
@@ -30,7 +30,7 @@ public class NonStickyPartitionedProducerWithKey {
         producer.produce();
     }
 
-    public void produce() throws InterruptedException, ExecutionException {
+    private void produce() throws InterruptedException, ExecutionException {
         AdminClientUtil.deleteTopic(TOPIC_NAME);
         AdminClientUtil.createTopic(TOPIC_NAME);
         kafkaProducer = createProducer();

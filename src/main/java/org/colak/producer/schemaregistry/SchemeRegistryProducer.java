@@ -21,16 +21,18 @@ class SchemeRegistryProducer {
         producer.produce();
     }
 
-    public void produce() {
-        kafkaProducer = createProducer();
+    private void produce() {
+        try {
+            kafkaProducer = createProducer();
 
-        sendOrder();
+            sendOrder();
 
-        // Tell producer to send all data and block until complete - synchronous
-        kafkaProducer.flush();
-
-        // Close the producer
-        kafkaProducer.close();
+            // Tell producer to send all data and block until complete - synchronous
+            kafkaProducer.flush();
+        } finally {
+            // Close the producer
+            kafkaProducer.close();
+        }
     }
 
     private KafkaProducer<String, MyOrder> createProducer() {
