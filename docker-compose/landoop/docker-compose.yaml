@@ -14,4 +14,8 @@ services:
       ADV_HOST: 127.0.0.1
       RUNTESTS: 0 # Disable Running tests so the cluster starts faster
       DEBUG: 1
-      SAMPLEDATA: 0
+      SAMPLEDATA: 0 # Disable creating sample topics
+    volumes:
+      - kafka_data:/var/lib/kafka/data
+volumes:
+  kafka_data:
