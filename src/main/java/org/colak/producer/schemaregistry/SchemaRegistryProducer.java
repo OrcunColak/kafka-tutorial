@@ -11,13 +11,13 @@ import org.colak.demo.MyOrder;
 import java.util.Properties;
 
 @Slf4j
-class SchemeRegistryProducer {
+class SchemaRegistryProducer {
 
     private static final String TOPIC_NAME = "order_topic";
     private KafkaProducer<String, MyOrder> kafkaProducer;
 
     public static void main(String[] args) {
-        SchemeRegistryProducer producer = new SchemeRegistryProducer();
+        SchemaRegistryProducer producer = new SchemaRegistryProducer();
         producer.produce();
     }
 
